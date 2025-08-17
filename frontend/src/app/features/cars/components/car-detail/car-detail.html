@@ -1,0 +1,82 @@
+<div class="car-detail-container" *ngIf="car">
+  <button mat-button routerLink="/cars" class="back-button">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Cars
+  </button>
+
+  <div class="car-detail-content">
+    <div class="car-image">
+      <img [src]="car.image_url" [alt]="car.make + ' ' + car.model">
+    </div>
+
+    <div class="car-info">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>{{car.make}} {{car.model}}</mat-card-title>
+          <mat-card-subtitle>{{car.year}} • {{car.category | titlecase}}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="specifications">
+            <h3>Specifications</h3>
+            <div class="spec-grid">
+              <div class="spec-item">
+                <mat-icon>airline_seat_recline_normal</mat-icon>
+                <span class="label">Seats:</span>
+                <span class="value">{{car.seats}}</span>
+              </div>
+              <div class="spec-item">
+                <mat-icon>settings</mat-icon>
+                <span class="label">Transmission:</span>
+                <span class="value">{{car.transmission | titlecase}}</span>
+              </div>
+              <div class="spec-item">
+                <mat-icon>local_gas_station</mat-icon>
+                <span class="label">Fuel Type:</span>
+                <span class="value">{{car.fuel_type | titlecase}}</span>
+              </div>
+              <div class="spec-item">
+                <mat-icon>palette</mat-icon>
+                <span class="label">Color:</span>
+                <span class="value">{{car.color}}</span>
+              </div>
+              <div class="spec-item">
+                <mat-icon>location_on</mat-icon>
+                <span class="label">Location:</span>
+                <span class="value">{{car.location}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="features" *ngIf="car.features.length > 0">
+            <h3>Features</h3>
+            <div class="features-chips">
+              <mat-chip *ngFor="let feature of car.features">{{feature}}</mat-chip>
+            </div>
+          </div>
+
+          <div class="pricing">
+            <div class="price-display">
+              <span class="daily-rate">${{car.daily_rate}}</span>
+              <span class="per-day">per day</span>
+            </div>
+            <div class="availability" [class.available]="car.is_available" [class.unavailable]="!car.is_available">
+              <mat-icon>{{car.is_available ? 'check_circle' : 'cancel'}}</mat-icon>
+              <span>{{car.is_available ? 'Available' : 'Not Available'}}</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" [disabled]="!car.is_available" class="book-button">
+            {{car.is_available ? 'Book This Car' : 'Unavailable'}}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!car" class="loading">
+  <p>Loading car details...</p>
+</div>

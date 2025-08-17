@@ -1,0 +1,72 @@
+version: '3.8'
+services:
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.user
+    env_file:
+      - .env
+    ports:
+      - "3001:3000"
+    depends_on:
+      - mysql
+
+  car-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.car
+    env_file:
+      - .env
+    ports:
+      - "3002:3000"
+    depends_on:
+      - mysql
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.booking
+    env_file:
+      - .env
+    ports:
+      - "3003:3000"
+    depends_on:
+      - mysql
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.payment
+    env_file:
+      - .env
+    ports:
+      - "3004:3000"
+    depends_on:
+      - mysql
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.notification
+    env_file:
+      - .env
+    ports:
+      - "3005:3000"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

@@ -1,0 +1,60 @@
+<div class="car-list-container">
+  <div class="header">
+    <h1>Available Cars</h1>
+    <div class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select>
+          <mat-option value="">All Categories</mat-option>
+          <mat-option value="economy">Economy</mat-option>
+          <mat-option value="midsize">Midsize</mat-option>
+          <mat-option value="suv">SUV</mat-option>
+          <mat-option value="luxury">Luxury</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="cars-grid" *ngIf="!isLoading">
+    <mat-card *ngFor="let car of cars$ | async" class="car-card">
+      <img mat-card-image [src]="car.image_url" [alt]="car.make + ' ' + car.model">
+      <mat-card-header>
+        <mat-card-title>{{car.make}} {{car.model}}</mat-card-title>
+        <mat-card-subtitle>{{car.year}} • {{car.category | titlecase}}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="car-details">
+          <div class="detail-item">
+            <mat-icon>airline_seat_recline_normal</mat-icon>
+            <span>{{car.seats}} seats</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>settings</mat-icon>
+            <span>{{car.transmission | titlecase}}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>local_gas_station</mat-icon>
+            <span>{{car.fuel_type | titlecase}}</span>
+          </div>
+        </div>
+        
+        <div class="price">
+          <span class="daily-rate">${{car.daily_rate}}</span>
+          <span class="per-day">per day</span>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-button [routerLink]="['/cars', car.id]">View Details</button>
+        <button mat-raised-button color="primary" [disabled]="!car.is_available">
+          {{car.is_available ? 'Book Now' : 'Unavailable'}}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading cars...</p>
+  </div>
+</div>

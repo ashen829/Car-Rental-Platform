@@ -40,6 +40,7 @@ export class Register {
       password: ['', [Validators.required, Validators.minLength(6)]],
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
+      dob: ['', [Validators.required]],
       phone: [''],
       license_number: ['']
     });
@@ -48,7 +49,13 @@ export class Register {
   onSubmit(): void {
     if (this.registerForm.valid) {
       this.isLoading = true;
-      this.authService.register(this.registerForm.value).subscribe({
+      const formValue = this.registerForm.value;
+      const payload = {
+        ...formValue,
+        date_of_birth: formValue.dob ? new Date(formValue.dob).toISOString().slice(0, 10) : undefined
+      };
+      delete payload.dob;
+      this.authService.register(payload).subscribe({
         next: (response) => {
           this.router.navigate(['/']);
           this.isLoading = false;

@@ -5,8 +5,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { BookingDialogComponent } from './booking-dialog.component';
 
 import { Car } from '../../services/car.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-car-detail',
@@ -16,45 +20,69 @@ import { Car } from '../../services/car.service';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule
+  MatChipsModule,
+  MatDialogModule,
+  ReactiveFormsModule,
+
   ],
   templateUrl: './car-detail.html',
   styleUrl: './car-detail.scss'
 })
+
 export class CarDetail implements OnInit {
   car: Car | null = null;
   carId: string | null = null;
+  bookingForm: FormGroup;
+  isBooking = false;
 
-  // Mock car data
-  mockCar: Car = {
-    id: '1',
-    make: 'Toyota',
-    model: 'Camry',
-    year: 2023,
-    license_plate: 'ABC123',
-    color: 'White',
-    category: 'midsize',
-    transmission: 'automatic',
-    fuel_type: 'gasoline',
-    seats: 5,
-    daily_rate: 50,
-    features: ['Air Conditioning', 'Bluetooth', 'Backup Camera', 'Heated Seats'],
-    image_url: 'https://via.placeholder.com/800x400',
-    is_available: true,
-    location: 'Downtown Office'
-  };
-
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private fb: FormBuilder
+  ) {
+    this.bookingForm = this.fb.group({
+      start_date: ['', Validators.required],
+      end_date: ['', Validators.required],
+      pickup_location: ['', Validators.required],
+      dropoff_location: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
     this.carId = this.route.snapshot.paramMap.get('id');
-    // For demo purposes, use mock data
-    this.car = this.mockCar;
-    
-    // In a real app, you would fetch car details:
-    // this.carService.getCarById(this.carId!).subscribe({
-    //   next: (response) => this.car = response.data,
-    //   error: (error) => console.error('Failed to load car:', error)
-    // });
+    if (this.carId) {
+      const token = localStorage.getItem('auth_token') || '';
+      const url = `http://localhost:3000/api/cars/${this.carId}`;
+      const headers = new HttpHeaders({
+        'Accept': 'application/json, text/plain, */*',
+        'Authorization': `Bearer ${token}`
+      });
+      this.http.get<any>(url, { headers }).subscribe({
+        next: (res) => {
+          this.car = res.data.car || res;
+        },
+        error: (err) => {
+          console.error('Failed to load car:', err);
+          this.car = null;
+        }
+      });
+    }
   }
+
+  openBookingDialog(): void {
+    if (!this.car) return;
+    const dialogRef = this.dialog.open(BookingDialogComponent, {
+      width: '400px',
+      data: { car: this.car }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'success') {
+        // Optionally show a success message
+      }
+    });
+  }
+
 }
+
+

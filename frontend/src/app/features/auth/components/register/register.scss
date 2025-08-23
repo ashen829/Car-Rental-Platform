@@ -1,0 +1,89 @@
+// Modern car rental platform registration styles
+.register-container {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(120deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.register-card {
+	background: #fff;
+	border-radius: 18px;
+	box-shadow: 0 8px 32px 0 rgba(30,60,114,0.15);
+	padding: 2.5rem 2rem 2rem 2rem;
+	width: 100%;
+	max-width: 420px;
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+}
+
+.register-card h2 {
+	text-align: center;
+	color: #1e3c72;
+	margin-bottom: 1.2rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.form-group label {
+	font-weight: 500;
+	color: #2a5298;
+	margin-bottom: 0.1rem;
+}
+
+.form-group input[matInput] {
+	padding: 0.7rem 1rem;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	font-size: 1rem;
+	background: #f8faff;
+	transition: border 0.2s;
+}
+
+.form-group input[matInput]:focus {
+	border: 1.5px solid #1e3c72;
+	outline: none;
+}
+
+.error {
+	color: #e53935;
+	font-size: 0.92rem;
+	margin-top: 0.1rem;
+}
+
+button[mat-raised-button] {
+	width: 100%;
+	padding: 0.9rem;
+	font-size: 1.1rem;
+	font-weight: 600;
+	border-radius: 6px;
+	margin-top: 0.7rem;
+	background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+	color: #fff;
+	box-shadow: 0 2px 8px 0 rgba(30,60,114,0.10);
+	transition: background 0.2s;
+}
+
+button[mat-raised-button]:hover {
+	background: linear-gradient(90deg, #2a5298 0%, #1e3c72 100%);
+}
+
+.register-footer {
+	text-align: center;
+	margin-top: 1.2rem;
+	color: #888;
+}
+
+.register-footer a {
+	color: #1e3c72;
+	text-decoration: underline;
+	font-weight: 500;
+}

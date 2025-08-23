@@ -1,28 +1,51 @@
 <div class="car-list-container">
   <div class="header">
     <h1>Available Cars</h1>
-    <div class="filters">
+    <form class="filters" [formGroup]="searchForm" (ngSubmit)="onSearch()">
       <mat-form-field appearance="outline">
-        <mat-label>Category</mat-label>
-        <mat-select>
+        <mat-label>Vehicle Category</mat-label>
+        <mat-select formControlName="category" required>
           <mat-option value="">All Categories</mat-option>
-          <mat-option value="economy">Economy</mat-option>
-          <mat-option value="midsize">Midsize</mat-option>
-          <mat-option value="suv">SUV</mat-option>
-          <mat-option value="luxury">Luxury</mat-option>
+          <mat-option value="budget">Budget</mat-option>
+          <mat-option value="city">City</mat-option>
+          <mat-option value="semi">Semi</mat-option>
+          <mat-option value="car">Car</mat-option>
+          <mat-option value="9seater">9 Seater</mat-option>
+          <mat-option value="14seater">14 Seater</mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="start_date" required />
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="end_date" required />
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Pick Up Location</mat-label>
+        <input matInput formControlName="pickup_location" placeholder="Enter location" required />
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit" [disabled]="searchForm.invalid || isLoading">Search</button>
+    </form>
   </div>
 
-  <div class="cars-grid" *ngIf="!isLoading">
-    <mat-card *ngFor="let car of cars$ | async" class="car-card">
-      <img mat-card-image [src]="car.image_url" [alt]="car.make + ' ' + car.model">
+  <div class="cars-grid" *ngIf="!isLoading && cars && cars.length">
+    <mat-card *ngFor="let car of cars" class="car-card modern-card">
+      <div class="car-image-wrapper">
+        <img mat-card-image [src]="car.image_url || 'https://via.placeholder.com/400x200?text=No+Image'" [alt]="car.make + ' ' + car.model">
+        <div class="availability-badge" [ngClass]="car.is_available ? 'available' : 'unavailable'">
+          {{car.is_available ? 'Available' : 'Unavailable'}}
+        </div>
+      </div>
       <mat-card-header>
         <mat-card-title>{{car.make}} {{car.model}}</mat-card-title>
         <mat-card-subtitle>{{car.year}} • {{car.category | titlecase}}</mat-card-subtitle>
       </mat-card-header>
-      
       <mat-card-content>
         <div class="car-details">
           <div class="detail-item">
@@ -37,21 +60,45 @@
             <mat-icon>local_gas_station</mat-icon>
             <span>{{car.fuel_type | titlecase}}</span>
           </div>
+          <div class="detail-item" *ngIf="car.location">
+            <mat-icon>location_on</mat-icon>
+            <span>{{car.location}}</span>
+          </div>
         </div>
-        
+        <div class="features-list" *ngIf="car.features?.length">
+          <mat-chip-list>
+            <mat-chip *ngFor="let feature of car.features">{{feature}}</mat-chip>
+          </mat-chip-list>
+        </div>
         <div class="price">
           <span class="daily-rate">${{car.daily_rate}}</span>
           <span class="per-day">per day</span>
         </div>
       </mat-card-content>
-      
-      <mat-card-actions>
-        <button mat-button [routerLink]="['/cars', car.id]">View Details</button>
-        <button mat-raised-button color="primary" [disabled]="!car.is_available">
-          {{car.is_available ? 'Book Now' : 'Unavailable'}}
+      <mat-card-actions align="end">
+        <button mat-flat-button color="primary" (click)="goToDetails(car)" class="details-btn">
+          <mat-icon>info</mat-icon>
+          <span>View Details</span>
+        </button>
+        <button mat-flat-button color="accent" [disabled]="!car.is_available" class="book-btn">
+          <mat-icon>event_available</mat-icon>
+          <span>{{car.is_available ? 'Book Now' : 'Unavailable'}}</span>
         </button>
       </mat-card-actions>
     </mat-card>
+  </div>
+  <div *ngIf="!isLoading && (!cars || !cars.length)" class="no-cars">
+    <p>No vehicles found.</p>
+  </div>
+
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+    <button mat-icon-button (click)="loadCars(page - 1)" [disabled]="page === 1">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span>Page {{page}} of {{totalPages}}</span>
+    <button mat-icon-button (click)="loadCars(page + 1)" [disabled]="page === totalPages">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
   </div>
   
   <div *ngIf="isLoading" class="loading">

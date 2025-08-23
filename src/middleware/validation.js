@@ -53,7 +53,8 @@ const carSchemas = {
     seats: Joi.number().integer().min(2).max(8).required(),
     daily_rate: Joi.number().positive().required(),
     features: Joi.array().items(Joi.string()),
-    image_url: Joi.string().uri().allow('')
+    image_url: Joi.string().uri().allow(''),
+    location: Joi.string().min(2).max(100).required()
   }),
 
   update: Joi.object({
@@ -69,7 +70,8 @@ const carSchemas = {
     daily_rate: Joi.number().positive(),
     features: Joi.array().items(Joi.string()),
     image_url: Joi.string().uri().allow(''),
-    is_available: Joi.boolean()
+    is_available: Joi.boolean(),
+    location: Joi.string().min(2).max(100)
   })
 };
 

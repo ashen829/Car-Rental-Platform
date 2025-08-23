@@ -56,6 +56,10 @@ const Car = sequelize.define('Car', {
     type: DataTypes.STRING,
     allowNull: true
   },
+    location: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   is_available: {
     type: DataTypes.BOOLEAN,
     defaultValue: true

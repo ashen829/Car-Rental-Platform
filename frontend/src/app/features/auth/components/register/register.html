@@ -1,1 +1,46 @@
-<p>register works!</p>
+<div class="register-container">
+	<div class="register-card">
+		<h2>Sign Up for Car Rental</h2>
+		<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="off">
+			<div class="form-group">
+				<label for="first_name">First Name</label>
+				<input matInput id="first_name" formControlName="first_name" placeholder="Enter your first name" required />
+				<div class="error" *ngIf="registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched">First name is required.</div>
+			</div>
+			<div class="form-group">
+				<label for="last_name">Last Name</label>
+				<input matInput id="last_name" formControlName="last_name" placeholder="Enter your last name" required />
+				<div class="error" *ngIf="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched">Last name is required.</div>
+			</div>
+			<div class="form-group">
+				<label for="email">Email Address</label>
+				<input matInput id="email" type="email" formControlName="email" placeholder="Enter your email" required />
+				<div class="error" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">Valid email is required.</div>
+			</div>
+			<div class="form-group">
+				<label for="password">Password</label>
+				<input matInput id="password" type="password" formControlName="password" placeholder="Create a password" required />
+				<div class="error" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">Password (min 6 chars) is required.</div>
+			</div>
+					<div class="form-group">
+						<label for="dob">Date of Birth</label>
+						<input matInput id="dob" type="date" formControlName="dob" placeholder="Select your date of birth" required />
+						<div class="error" *ngIf="registerForm.get('dob')?.invalid && registerForm.get('dob')?.touched">Date of birth is required.</div>
+					</div>
+					<div class="form-group">
+						<label for="phone">Phone Number</label>
+						<input matInput id="phone" type="tel" formControlName="phone" placeholder="Enter your phone number" />
+					</div>
+			<div class="form-group">
+				<label for="license_number">Driver's License Number</label>
+				<input matInput id="license_number" formControlName="license_number" placeholder="Enter your license number" />
+			</div>
+			<button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || isLoading">
+				{{ isLoading ? 'Registering...' : 'Register' }}
+			</button>
+		</form>
+		<div class="register-footer">
+			<p>Already have an account? <a routerLink="/auth/login">Login here</a></p>
+		</div>
+	</div>
+</div>

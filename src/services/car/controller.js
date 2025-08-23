@@ -1,5 +1,6 @@
 const Car = require('../../models/car');
 const Booking = require('../../models/booking');
+const { Op } = require('sequelize');
 
 class CarController {
   async createCar(req, res, next) {
@@ -28,20 +29,21 @@ class CarController {
         available_only = 'false'
       } = req.query;
 
-      const offset = (page - 1) * limit;
-      const where = {};
-      if (category) where.category = category;
-      if (transmission) where.transmission = transmission;
-      if (fuel_type) where.fuel_type = fuel_type;
-      if (available_only === 'true') where.is_available = true;
-      where.daily_rate = { $gte: min_price, $lte: max_price };
+  const offset = (page - 1) * limit;
+  const where = {};
+  if (category) where.category = category;
+  if (transmission) where.transmission = transmission;
+  if (fuel_type) where.fuel_type = fuel_type;
+  // Removed is_available and daily_rate filter to return all cars
 
+      console.log('Car search where object:', where);
       const { count, rows: cars } = await Car.findAndCountAll({
         where,
         offset: parseInt(offset),
         limit: parseInt(limit),
         order: [['createdAt', 'DESC']]
       });
+      console.log('Cars found:', cars.length);
 
       res.json({
         status: 'success',
@@ -103,7 +105,6 @@ class CarController {
   async deleteCar(req, res, next) {
     try {
       const { id } = req.params;
-      // Check if car has active bookings
       const activeBookings = await Booking.findAll({
         where: {
           car_id: id,
@@ -159,7 +160,7 @@ class CarController {
       const {
         start_date,
         end_date,
-        location = '',
+        pickup_location = '',
         category = '',
         min_price = 0,
         max_price = 1000
@@ -172,45 +173,56 @@ class CarController {
         });
       }
 
-      // Find all available cars
-      const where = { is_available: true };
-      if (category) where.category = category;
-      where.daily_rate = { $gte: min_price, $lte: max_price };
+  const where = { is_available: true };
+  if (category) where.category = category;
+  if (pickup_location) where.location = pickup_location;
+  where.daily_rate = { $gte: min_price, $lte: max_price };
 
-      // Get all cars
-      const cars = await Car.findAll({ where });
+  const cars = await Car.findAll({ where });
 
-      // Get all bookings that conflict with the requested period
-      const bookings = await Booking.findAll({
-        where: {
-          status: ['confirmed', 'active'],
-          [Booking.sequelize.Op.or]: cars.map(car => ({
-            car_id: car.id
-          })),
-          [Booking.sequelize.Op.and]: [
-            { start_date: { $lt: end_date } },
-            { end_date: { $gt: start_date } }
-          ]
+  if (!cars.length) {
+    return res.json({
+      status: 'success',
+      data: {
+        cars: [],
+        search_criteria: {
+          start_date,
+          end_date,
+          pickup_location,
+          category,
+          price_range: { min: min_price, max: max_price }
         }
-      });
+      }
+    });
+  }
 
-      // Filter out cars with conflicting bookings
-      const bookedCarIds = new Set(bookings.map(b => b.car_id));
-      const availableCars = cars.filter(car => !bookedCarIds.has(car.id));
+  // Find bookings that overlap with the requested dates
+  const bookingWhere = {
+    status: ['confirmed', 'active'],
+    [Op.or]: cars.map(car => ({ car_id: car.id })),
+    [Op.and]: [
+      { start_date: { [Op.lt]: end_date } },
+      { end_date: { [Op.gt]: start_date } }
+    ]
+  };
 
-      res.json({
-        status: 'success',
-        data: {
-          cars: availableCars,
-          search_criteria: {
-            start_date,
-            end_date,
-            location,
-            category,
-            price_range: { min: min_price, max: max_price }
-          }
-        }
-      });
+  const bookings = await Booking.findAll({ where: bookingWhere });
+  const bookedCarIds = new Set(bookings.map(b => b.car_id));
+  const availableCars = cars.filter(car => !bookedCarIds.has(car.id));
+
+  res.json({
+    status: 'success',
+    data: {
+      cars: availableCars,
+      search_criteria: {
+        start_date,
+        end_date,
+        pickup_location,
+        category,
+        price_range: { min: min_price, max: max_price }
+      }
+    }
+  });
     } catch (error) {
       next(error);
     }

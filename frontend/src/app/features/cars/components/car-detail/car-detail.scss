@@ -1,0 +1,48 @@
+.car-detail-container {
+	padding: 16px;
+}
+
+.top-row {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.back-button { margin-right: 12px; }
+
+.title-actions { display:flex; align-items:center; justify-content:space-between; width:100%; }
+.car-title-group { display:flex; flex-direction:column; }
+.car-title { margin: 0; font-size: 1.5rem; }
+.car-subtitle { color: rgba(0,0,0,0.6); }
+
+.actions-right { display:flex; align-items:center; gap:12px; }
+.price { display:flex; align-items:baseline; gap:6px; margin-right:12px; }
+.price .rate { font-size:1.25rem; font-weight:600; }
+.availability { display:flex; align-items:center; gap:6px; padding:6px 10px; border-radius:18px; }
+.availability.available { background: rgba(76,175,80,0.12); color: #2e7d32; }
+.availability.unavailable { background: rgba(244,67,54,0.08); color: #c62828; }
+
+.content-grid { display:grid; grid-template-columns: 360px 1fr; gap: 16px; align-items:start; }
+.image-panel .image-card img { width:100%; height: auto; object-fit:cover; border-radius:6px; }
+.image-footer { display:flex; justify-content:space-between; padding:8px; }
+
+.info-card { width: 100%; }
+.specifications h3, .features h3 { display:flex; align-items:center; gap:8px; margin:0 0 8px 0; }
+.spec-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; }
+.spec-item { display:flex; align-items:center; gap:8px; }
+.spec-label { font-size:0.8rem; color: rgba(0,0,0,0.6); }
+.spec-value { font-weight:600; }
+
+.features-chips mat-chip { margin:4px 6px 4px 0; }
+
+.card-actions-row { display:flex; align-items:center; gap:12px; padding:12px; }
+.price-inline { margin-right:auto; display:flex; align-items:center; gap:6px; }
+
+.loading { padding: 32px; text-align:center; }
+
+@media (max-width: 800px) {
+	.content-grid { grid-template-columns: 1fr; }
+	.image-panel { order: -1; }
+}
+

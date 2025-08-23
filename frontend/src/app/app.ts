@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterModule } from '@angular/router';
+import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,11 +31,16 @@ export class App {
   protected readonly title = signal('Car Rental Platform');
   currentUser$: Observable<User | null>;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.currentUser$ = this.authService.currentUser$;
   }
 
   logout(): void {
-    this.authService.logout().subscribe();
+    // Call backend logout and then navigate to the auth login route.
+    // We navigate to the login page on both success and error to ensure the user is returned to the auth screen.
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/auth/login']),
+      error: () => this.router.navigate(['/auth/login'])
+    });
   }
 }

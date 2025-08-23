@@ -96,6 +96,19 @@ import { Car } from '../../services/car.service';
       .summary { display:flex; justify-content:space-between; align-items:center; padding-top:8px; }
       .summary-left { display:flex; flex-direction:column; gap:4px; }
       .booking-card { width:100%; max-width:680px; }
+  /* make dialog card more solid and vibrant */
+  .booking-card { background: linear-gradient(180deg,#ffffff,#fbfdff); border-radius:12px; box-shadow: 0 12px 40px rgba(12,35,64,0.12); }
+  .booking-card mat-card-header { padding-bottom: 6px; }
+  .booking-card mat-card-title { font-weight:700; color:#0d47a1; }
+  .booking-card mat-card-subtitle { color:#475569; }
+
+  /* Datepicker panel background should not be transparent */
+  .mat-datepicker-content, .mat-calendar, .mat-datepicker-toggle { background: #fff; }
+  .mat-calendar { background: #fff; color: #102a43; box-shadow: 0 6px 20px rgba(16,42,67,0.12); border-radius:8px; }
+  .mat-calendar-table .mat-calendar-body-cell { border-radius:6px; }
+
+  /* buttons in dialog */
+  .actions button[mat-raised-button] { background: linear-gradient(90deg,#3f51b5,#7b1fa2); color:#fff; }
     `
   ]
 })

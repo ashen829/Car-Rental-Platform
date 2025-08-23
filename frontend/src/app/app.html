@@ -3,17 +3,26 @@
     <span routerLink="/" class="logo">{{title()}}</span>
     
     <span class="spacer"></span>
-    
+
     <nav class="nav-links">
-      <a mat-button routerLink="/cars">Cars</a>
+      <a mat-button routerLink="/cars"><mat-icon>directions_car</mat-icon> Cars</a>
       <ng-container *ngIf="currentUser$ | async as user; else authLinks">
-        <a mat-button routerLink="/bookings">My Bookings</a>
-        <a mat-button routerLink="/profile">Profile</a>
-        <a mat-button routerLink="/admin" *ngIf="user.role === 'admin'">Admin</a>
-        <button mat-button [matMenuTriggerFor]="userMenu">
-          <mat-icon>account_circle</mat-icon>
-          {{user.first_name}}
+        <a mat-button routerLink="/bookings"><mat-icon>book_online</mat-icon> My Bookings</a>
+        <a mat-button routerLink="/profile"><mat-icon>badge</mat-icon> Profile</a>
+        <a mat-button routerLink="/admin" *ngIf="user.role === 'admin'"><mat-icon>admin_panel_settings</mat-icon> Admin</a>
+
+        <!-- notifications -->
+        <button mat-icon-button class="notifications-btn" aria-label="Notifications" routerLink="/notifications">
+          <mat-icon>notifications</mat-icon>
+          <span class="badge" *ngIf="false">3</span>
         </button>
+
+        <!-- user menu uses compact avatar + name on larger screens -->
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
+          <mat-icon>account_circle</mat-icon>
+          <span class="user-name">{{user.first_name}}</span>
+        </button>
+
         <mat-menu #userMenu="matMenu">
           <button mat-menu-item routerLink="/profile">
             <mat-icon>person</mat-icon>
@@ -26,8 +35,8 @@
         </mat-menu>
       </ng-container>
       <ng-template #authLinks>
-        <a mat-button routerLink="/auth/login">Login</a>
-        <a mat-button routerLink="/auth/register">Register</a>
+        <a mat-button routerLink="/auth/login"><mat-icon>login</mat-icon> Login</a>
+        <a mat-button routerLink="/auth/register"><mat-icon>person_add</mat-icon> Register</a>
       </ng-template>
     </nav>
   </mat-toolbar-row>

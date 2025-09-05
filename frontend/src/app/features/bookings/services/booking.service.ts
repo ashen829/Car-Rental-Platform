@@ -48,15 +48,15 @@ export class BookingService {
   constructor(private apiService: ApiService) {}
 
   createBooking(bookingData: CreateBookingRequest): Observable<ApiResponse<Booking>> {
-    return this.apiService.post<ApiResponse<Booking>>('bookings', bookingData);
+  return this.apiService.post<ApiResponse<Booking>>('bookings', bookingData);
   }
 
   getUserBookings(params?: BookingSearchParams): Observable<PaginatedResponse<Booking>> {
-    return this.apiService.get<PaginatedResponse<Booking>>('bookings/my-bookings', params);
+  return this.apiService.get<PaginatedResponse<Booking>>('bookings/my-bookings', params);
   }
 
   getAllBookings(params?: BookingSearchParams): Observable<PaginatedResponse<Booking>> {
-    return this.apiService.get<PaginatedResponse<Booking>>('bookings', params);
+  return this.apiService.get<PaginatedResponse<Booking>>('bookings', params);
   }
 
   getBookingById(id: string): Observable<ApiResponse<Booking>> {

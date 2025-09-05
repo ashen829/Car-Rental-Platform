@@ -1,6 +1,13 @@
+
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
+  api: {
+    user: 'http://localhost:3001/api',
+    car: 'http://localhost:3002/api',
+    booking: 'http://localhost:3003/api',
+    payment: 'http://localhost:3004/api',
+    notification: 'http://localhost:3005/api',
+  },
   appName: 'Car Rental Platform',
   version: '1.0.0'
 };

@@ -23,7 +23,14 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = environment.apiUrl;
+  private getBaseUrl(endpoint: string): string {
+    if (endpoint.startsWith('users')) return environment.api.user;
+    if (endpoint.startsWith('cars')) return environment.api.car;
+    if (endpoint.startsWith('bookings')) return environment.api.booking;
+    if (endpoint.startsWith('payments')) return environment.api.payment;
+    if (endpoint.startsWith('notifications')) return environment.api.notification;
+    return '';
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -37,26 +44,31 @@ export class ApiService {
         }
       });
     }
-    return this.http.get<T>(`${this.baseUrl}/${endpoint}`, { params: httpParams });
+  const baseUrl = this.getBaseUrl(endpoint);
+  return this.http.get<T>(`${baseUrl}/${endpoint}`, { params: httpParams });
   }
 
   post<T>(endpoint: string, data: any): Observable<T> {
     // If data is FormData, do not set Content-Type header (browser will set it)
+    const baseUrl = this.getBaseUrl(endpoint);
     if (data instanceof FormData) {
-      return this.http.post<T>(`${this.baseUrl}/${endpoint}`, data);
+      return this.http.post<T>(`${baseUrl}/${endpoint}`, data);
     }
-    return this.http.post<T>(`${this.baseUrl}/${endpoint}`, data);
+    return this.http.post<T>(`${baseUrl}/${endpoint}`, data);
   }
 
   put<T>(endpoint: string, data: any): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}/${endpoint}`, data);
+  const baseUrl = this.getBaseUrl(endpoint);
+  return this.http.put<T>(`${baseUrl}/${endpoint}`, data);
   }
 
   delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}/${endpoint}`);
+  const baseUrl = this.getBaseUrl(endpoint);
+  return this.http.delete<T>(`${baseUrl}/${endpoint}`);
   }
 
   patch<T>(endpoint: string, data: any): Observable<T> {
-    return this.http.patch<T>(`${this.baseUrl}/${endpoint}`, data);
+  const baseUrl = this.getBaseUrl(endpoint);
+  return this.http.patch<T>(`${baseUrl}/${endpoint}`, data);
   }
 }

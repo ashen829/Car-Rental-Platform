@@ -30,6 +30,6 @@ export class NotificationsService {
   getMyNotifications(page = 1, limit = 20, is_read: '' | 'true' | 'false' = ''): Observable<NotificationsResponse> {
     const params: any = { page, limit };
     if (is_read !== '') params.is_read = is_read;
-    return this.api.get<NotificationsResponse>('notifications/my-notifications', params);
+  return this.api.get<NotificationsResponse>('notifications/my-notifications', params);
   }
 }

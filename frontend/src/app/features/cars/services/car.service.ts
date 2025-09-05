@@ -52,31 +52,31 @@ export class CarService {
   constructor(private apiService: ApiService) {}
 
   getAllCars(params?: CarSearchParams): Observable<PaginatedResponse<Car>> {
-    return this.apiService.get<PaginatedResponse<Car>>('cars', params);
+  return this.apiService.get<PaginatedResponse<Car>>('cars', params);
   }
 
   searchCars(params: CarSearchParams): Observable<PaginatedResponse<Car>> {
-    return this.apiService.get<PaginatedResponse<Car>>('cars/search', params);
+  return this.apiService.get<PaginatedResponse<Car>>('cars/search', params);
   }
 
   getCarById(id: string): Observable<ApiResponse<Car>> {
-    return this.apiService.get<ApiResponse<Car>>(`cars/${id}`);
+  return this.apiService.get<ApiResponse<Car>>(`cars/${id}`);
   }
 
   createCar(carData: CreateCarRequest | FormData): Observable<ApiResponse<Car>> {
     // If FormData, send as multipart
-    return this.apiService.post<ApiResponse<Car>>('cars', carData);
+  return this.apiService.post<ApiResponse<Car>>('cars', carData);
   }
 
   updateCar(id: string, carData: Partial<CreateCarRequest>): Observable<ApiResponse<Car>> {
-    return this.apiService.put<ApiResponse<Car>>(`cars/${id}`, carData);
+  return this.apiService.put<ApiResponse<Car>>(`cars/${id}`, carData);
   }
 
   deleteCar(id: string): Observable<ApiResponse<any>> {
-    return this.apiService.delete<ApiResponse<any>>(`cars/${id}`);
+  return this.apiService.delete<ApiResponse<any>>(`cars/${id}`);
   }
 
   updateAvailability(id: string, isAvailable: boolean): Observable<ApiResponse<Car>> {
-    return this.apiService.put<ApiResponse<Car>>(`cars/${id}/availability`, { is_available: isAvailable });
+  return this.apiService.put<ApiResponse<Car>>(`cars/${id}/availability`, { is_available: isAvailable });
   }
 }

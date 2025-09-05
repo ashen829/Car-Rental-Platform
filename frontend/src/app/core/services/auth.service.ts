@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/users/login`, credentials)
+  return this.http.post<AuthResponse>(`${environment.api.user}/users/login`, credentials)
       .pipe(
         tap(response => {
           if (response.status === 'success' && response.data) {
@@ -77,7 +77,7 @@ export class AuthService {
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/users/register`, userData)
+  return this.http.post<AuthResponse>(`${environment.api.user}/users/register`, userData)
       .pipe(
         tap(response => {
           if (response.status === 'success' && response.data) {
@@ -88,7 +88,7 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/users/logout`, {})
+  return this.http.post(`${environment.api.user}/users/logout`, {})
       .pipe(
         tap(() => {
           this.clearSession();

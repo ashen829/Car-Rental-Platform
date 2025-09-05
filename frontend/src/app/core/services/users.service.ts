@@ -14,6 +14,6 @@ export class UsersService {
   constructor(private api: ApiService) {}
 
   getUserById(id: string): Observable<ApiResponse<UserBrief>> {
-    return this.api.get<ApiResponse<UserBrief>>(`users/${id}`);
+  return this.api.get<ApiResponse<UserBrief>>(`users/${id}`);
   }
 }

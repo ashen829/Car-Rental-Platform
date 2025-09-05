@@ -104,11 +104,16 @@ import { CarService } from '../cars/services/car.service';
                 <mat-hint>Comma-separated features</mat-hint>
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="full-width fancy">
-                <mat-icon matPrefix>image</mat-icon>
-                <mat-label>Image URL</mat-label>
-                <input matInput formControlName="image_url" />
-              </mat-form-field>
+              <!-- Image URL field removed -->
+              <!-- File input for image upload -->
+              <div class="full-width" style="margin-bottom: 8px;">
+                <label style="font-weight: 500; color: #1565c0; display: flex; align-items: center; gap: 8px;">
+                  <mat-icon>upload</mat-icon>
+                  Upload Image (optional):
+                  <input type="file" accept="image/*" (change)="onFileChange($event)" style="margin-left: 12px;" />
+                </label>
+                <div *ngIf="selectedFileName" style="font-size: 0.95em; color: #475569; margin-top: 2px;">Selected: {{ selectedFileName }}</div>
+              </div>
 
               <mat-form-field appearance="outline" class="full-width fancy">
                 <mat-icon matPrefix>place</mat-icon>
@@ -153,6 +158,18 @@ export class AdminVehicleAddComponent {
   form: any;
 
   saving = false;
+  selectedFile: File | null = null;
+  selectedFileName: string = '';
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.selectedFileName = this.selectedFile.name;
+    } else {
+      this.selectedFile = null;
+      this.selectedFileName = '';
+    }
+  }
 
   constructor(private fb: FormBuilder, private carSvc: CarService, private router: Router) {
     this.form = this.fb.group({
@@ -166,9 +183,8 @@ export class AdminVehicleAddComponent {
       fuel_type: ['gasoline', Validators.required],
       seats: [4, [Validators.required, Validators.min(1)]],
       daily_rate: [0, [Validators.required, Validators.min(0)]],
-      features: [''],
-      image_url: [''],
-      location: ['']
+  features: [''],
+  location: ['']
     });
   }
 
@@ -176,26 +192,46 @@ export class AdminVehicleAddComponent {
     if (this.form.invalid) return;
     this.saving = true;
     const raw = this.form.value as any;
-    const payload = {
-      make: String(raw.make || ''),
-      model: String(raw.model || ''),
-      year: Number(raw.year || new Date().getFullYear()),
-      license_plate: String(raw.license_plate || ''),
-      color: String(raw.color || ''),
-      category: String(raw.category || 'midsize'),
-      transmission: String(raw.transmission || 'automatic'),
-      fuel_type: String(raw.fuel_type || 'gasoline'),
-      seats: Number(raw.seats || 4),
-      daily_rate: Number(raw.daily_rate || 0),
-      features: raw.features ? String(raw.features).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
-      image_url: raw.image_url ? String(raw.image_url) : undefined,
-      location: raw.location ? String(raw.location) : undefined
-    } as any;
-
-    this.carSvc.createCar(payload).subscribe({
-      next: () => { this.saving = false; this.router.navigate(['/admin/vehicles']); },
-      error: (e) => { console.error(e); this.saving = false; }
-    });
+    // If file selected, use FormData for multipart
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append('make', String(raw.make || ''));
+      formData.append('model', String(raw.model || ''));
+      formData.append('year', String(raw.year || new Date().getFullYear()));
+      formData.append('license_plate', String(raw.license_plate || ''));
+      formData.append('color', String(raw.color || ''));
+      formData.append('category', String(raw.category || 'midsize'));
+      formData.append('transmission', String(raw.transmission || 'automatic'));
+      formData.append('fuel_type', String(raw.fuel_type || 'gasoline'));
+      formData.append('seats', String(raw.seats || 4));
+      formData.append('daily_rate', String(raw.daily_rate || 0));
+  formData.append('features', raw.features ? String(raw.features) : '');
+  formData.append('location', raw.location ? String(raw.location) : '');
+      formData.append('image', this.selectedFile);
+      this.carSvc.createCar(formData).subscribe({
+        next: () => { this.saving = false; this.router.navigate(['/admin/vehicles']); },
+        error: (e) => { console.error(e); this.saving = false; }
+      });
+    } else {
+      const payload = {
+        make: String(raw.make || ''),
+        model: String(raw.model || ''),
+        year: Number(raw.year || new Date().getFullYear()),
+        license_plate: String(raw.license_plate || ''),
+        color: String(raw.color || ''),
+        category: String(raw.category || 'midsize'),
+        transmission: String(raw.transmission || 'automatic'),
+        fuel_type: String(raw.fuel_type || 'gasoline'),
+        seats: Number(raw.seats || 4),
+        daily_rate: Number(raw.daily_rate || 0),
+  features: raw.features ? String(raw.features).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+  location: raw.location ? String(raw.location) : undefined
+      } as any;
+      this.carSvc.createCar(payload).subscribe({
+        next: () => { this.saving = false; this.router.navigate(['/admin/vehicles']); },
+        error: (e) => { console.error(e); this.saving = false; }
+      });
+    }
   }
 
   cancel() { this.router.navigate(['/admin/vehicles']); }

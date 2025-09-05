@@ -16,6 +16,7 @@ export interface Car {
   daily_rate: number;
   features: string[];
   image_url?: string;
+  imageBase64?: string | null;
   is_available: boolean;
   location?: string;
 }
@@ -62,7 +63,8 @@ export class CarService {
     return this.apiService.get<ApiResponse<Car>>(`cars/${id}`);
   }
 
-  createCar(carData: CreateCarRequest): Observable<ApiResponse<Car>> {
+  createCar(carData: CreateCarRequest | FormData): Observable<ApiResponse<Car>> {
+    // If FormData, send as multipart
     return this.apiService.post<ApiResponse<Car>>('cars', carData);
   }
 

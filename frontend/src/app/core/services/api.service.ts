@@ -41,6 +41,10 @@ export class ApiService {
   }
 
   post<T>(endpoint: string, data: any): Observable<T> {
+    // If data is FormData, do not set Content-Type header (browser will set it)
+    if (data instanceof FormData) {
+      return this.http.post<T>(`${this.baseUrl}/${endpoint}`, data);
+    }
     return this.http.post<T>(`${this.baseUrl}/${endpoint}`, data);
   }
 

@@ -37,7 +37,10 @@
   <div class="cars-grid" *ngIf="!isLoading && cars && cars.length">
     <mat-card *ngFor="let car of cars" class="car-card modern-card">
       <div class="car-image-wrapper">
-        <img mat-card-image [src]="car.image_url || 'https://via.placeholder.com/400x200?text=No+Image'" [alt]="car.make + ' ' + car.model">
+        <img mat-card-image *ngIf="car.imageBase64; else noImg" [src]="car.imageBase64" [alt]="car.make + ' ' + car.model">
+        <ng-template #noImg>
+          <img mat-card-image [src]="car.image_url || 'https://via.placeholder.com/400x200?text=No+Image'" [alt]="car.make + ' ' + car.model">
+        </ng-template>
         <div class="availability-badge" [ngClass]="car.is_available ? 'available' : 'unavailable'">
           {{car.is_available ? 'Available' : 'Unavailable'}}
         </div>

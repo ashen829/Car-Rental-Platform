@@ -2,6 +2,30 @@ const Joi = require('joi');
 
 const validate = (schema) => {
   return (req, res, next) => {
+    // If multipart/form-data, parse/convert fields as needed
+    if (req.is('multipart/form-data')) {
+      // Convert numeric fields
+      const numFields = ['year', 'seats', 'daily_rate'];
+      numFields.forEach(f => {
+        if (req.body[f] !== undefined) req.body[f] = Number(req.body[f]);
+      });
+      // Parse features as array (comma separated or JSON)
+      if (req.body.features) {
+        try {
+          if (Array.isArray(req.body.features)) {
+            // already array
+          } else if (typeof req.body.features === 'string') {
+            if (req.body.features.trim().startsWith('[')) {
+              req.body.features = JSON.parse(req.body.features);
+            } else {
+              req.body.features = req.body.features.split(',').map(s => s.trim()).filter(Boolean);
+            }
+          }
+        } catch (e) {
+          req.body.features = [];
+        }
+      }
+    }
     const { error } = schema.validate(req.body);
     if (error) {
       return res.status(400).json({
@@ -53,7 +77,7 @@ const carSchemas = {
     seats: Joi.number().integer().min(2).max(8).required(),
     daily_rate: Joi.number().positive().required(),
     features: Joi.array().items(Joi.string()),
-    image_url: Joi.string().uri().allow(''),
+  // image_url removed, image file handled separately
     location: Joi.string().min(2).max(100).required()
   }),
 

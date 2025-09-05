@@ -52,8 +52,8 @@ const Car = sequelize.define('Car', {
     type: DataTypes.JSON,
     allowNull: true
   },
-  image_url: {
-    type: DataTypes.STRING,
+  image: {
+    type: DataTypes.BLOB('long'),
     allowNull: true
   },
     location: {

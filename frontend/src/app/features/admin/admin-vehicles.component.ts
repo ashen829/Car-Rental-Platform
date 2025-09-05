@@ -24,6 +24,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       <div *ngIf="loading" class="loading"><mat-spinner diameter="36"></mat-spinner></div>
 
       <table mat-table [dataSource]="cars" class="mat-elevation-z2" *ngIf="!loading">
+        <!-- Image -->
+        <ng-container matColumnDef="image">
+          <th mat-header-cell *matHeaderCellDef> Image </th>
+          <td mat-cell *matCellDef="let c">
+            <img *ngIf="c.imageBase64" [src]="c.imageBase64" alt="Vehicle Image" style="width:60px; height:40px; object-fit:cover; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
+            <span *ngIf="!c.imageBase64" class="muted">No Image</span>
+          </td>
+        </ng-container>
         <!-- Make & Model -->
         <ng-container matColumnDef="makeModel">
           <th mat-header-cell *matHeaderCellDef> Vehicle </th>
@@ -119,7 +127,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class AdminVehiclesComponent implements OnInit {
   cars: Car[] = [];
   loading = false;
-  displayedColumns = ['makeModel','year','category','daily_rate','is_available','actions'];
+  displayedColumns = ['image','makeModel','year','category','daily_rate','is_available','actions'];
   pagination = { page: 1, limit: 20, total: 0, pages: 1 };
 
   constructor(private carSvc: CarService, private router: Router) {}
@@ -131,7 +139,16 @@ export class AdminVehiclesComponent implements OnInit {
     this.carSvc.getAllCars({ page, limit: this.pagination.limit }).subscribe({
       next: (res: any) => {
         this.loading = false;
-        this.cars = res.data.cars;
+        // Convert image buffer to base64 for each car
+        this.cars = res.data.cars.map((car: any) => {
+          if (car.image && car.image.data && Array.isArray(car.image.data)) {
+            const binary = new Uint8Array(car.image.data).reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+            car.imageBase64 = 'data:image/jpeg;base64,' + btoa(binary);
+          } else {
+            car.imageBase64 = null;
+          }
+          return car;
+        });
         this.pagination.page = res.data.page;
         this.pagination.limit = this.pagination.limit;
         this.pagination.total = res.data.total;

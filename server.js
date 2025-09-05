@@ -5,6 +5,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const userRoutes = require('./src/services/user/routes');
+// ...existing code...
 const carRoutes = require('./src/services/car/routes');
 const bookingRoutes = require('./src/services/booking/routes');
 const paymentRoutes = require('./src/services/payment/routes');
@@ -21,8 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet());
 app.use(cors());
 app.use(morgan('combined'));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -41,11 +41,16 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
-app.use('/api/users', userRoutes);
+// Only apply express.json and express.urlencoded to routes that do NOT use multer (file upload)
+app.use('/api/users', express.json({ limit: '10mb' }), express.urlencoded({ extended: true }), userRoutes);
+app.use('/api/bookings', express.json({ limit: '10mb' }), express.urlencoded({ extended: true }), bookingRoutes);
+app.use('/api/payments', express.json({ limit: '10mb' }), express.urlencoded({ extended: true }), paymentRoutes);
+app.use('/api/notifications', express.json({ limit: '10mb' }), express.urlencoded({ extended: true }), notificationRoutes);
+// For /api/cars, do NOT use express.json or express.urlencoded globally, let multer handle multipart/form-data
+// But for /api/cars/:id/availability, apply express.json() to parse JSON bodies
+const expressJson = express.json({ limit: '10mb' });
+app.use('/api/cars/:id/availability', expressJson, carRoutes);
 app.use('/api/cars', carRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/notifications', notificationRoutes);
 
 // 404 handler
 app.use((req, res) => {

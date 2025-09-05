@@ -60,7 +60,14 @@ export class CarDetail implements OnInit {
       });
       this.http.get<any>(url, { headers }).subscribe({
         next: (res) => {
-          this.car = res.data.car || res;
+          const car = res.data.car || res;
+          if (car.image && car.image.data && Array.isArray(car.image.data)) {
+            const binary = new Uint8Array(car.image.data).reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+            car.imageBase64 = 'data:image/jpeg;base64,' + btoa(binary);
+          } else {
+            car.imageBase64 = null;
+          }
+          this.car = car;
         },
         error: (err) => {
           console.error('Failed to load car:', err);

@@ -5,13 +5,27 @@ const { Op } = require('sequelize');
 class CarController {
   async createCar(req, res, next) {
     try {
-      const car = await Car.create({ ...req.body, is_available: true });
+      console.log('DEBUG: req.body:', req.body);
+      console.log('DEBUG: req.file:', req.file);
+      let carData = { ...req.body, is_available: true };
+      if (req.file) {
+        carData.image = req.file.buffer;
+      }
+      // Defensive: check for required fields
+      const requiredFields = ['make','model','year','license_plate','color','category','transmission','fuel_type','seats','daily_rate','location'];
+      for (const field of requiredFields) {
+        if (carData[field] === undefined || carData[field] === null || carData[field] === '') {
+          return res.status(400).json({ status: 'error', message: `Missing required field: ${field}` });
+        }
+      }
+      const car = await Car.create(carData);
       res.status(201).json({
         status: 'success',
         message: 'Car created successfully',
         data: { car }
       });
     } catch (error) {
+      console.error('CREATE CAR ERROR:', error);
       next(error);
     }
   }

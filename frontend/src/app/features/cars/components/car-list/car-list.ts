@@ -73,8 +73,17 @@ export class CarList implements OnInit {
       next: (response: any) => {
         const data = response.data;
         // Try both possible keys for car array
-        this.cars = data.cars || data.items || [];
-        console.log('API data:', data, 'Cars:', this.cars);
+        const cars = data.cars || data.items || [];
+        // Convert image buffer to base64 for each car
+        this.cars = cars.map((car: any) => {
+          if (car.image && car.image.data && Array.isArray(car.image.data)) {
+            const binary = new Uint8Array(car.image.data).reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+            car.imageBase64 = 'data:image/jpeg;base64,' + btoa(binary);
+          } else {
+            car.imageBase64 = null;
+          }
+          return car;
+        });
         this.page = data.page || data.pagination?.page || 1;
         this.total = data.total || data.pagination?.total || 0;
         this.totalPages = data.totalPages || data.pagination?.pages || data.pagination?.totalPages || 1;
@@ -100,7 +109,16 @@ export class CarList implements OnInit {
     const url = `http://localhost:3000/cars/search?${params}`;
     this.http.post<any>(url, {}).subscribe({
       next: (res) => {
-        this.cars = res.data?.items || [];
+        const cars = res.data?.items || [];
+        this.cars = cars.map((car: any) => {
+          if (car.image && car.image.data && Array.isArray(car.image.data)) {
+            const binary = new Uint8Array(car.image.data).reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+            car.imageBase64 = 'data:image/jpeg;base64,' + btoa(binary);
+          } else {
+            car.imageBase64 = null;
+          }
+          return car;
+        });
         this.isLoading = false;
       },
       error: (err) => {

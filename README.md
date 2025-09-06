@@ -63,20 +63,6 @@ The platform is designed for cloud-native deployment using Docker and Kubernetes
 - `GET /api/booking/` — Get all bookings (admin only)
 - `PUT /api/booking/:id/status` — Update booking status (admin only)
 
-### Payment Endpoints
-- `POST /api/payment/process` — Process a payment (auth required)
-- `GET /api/payment/booking/:bookingId` — Get payment by booking (auth required)
-- `GET /api/payment/:id` — Get payment by ID (auth required)
-- `GET /api/payment/` — Get all payments (admin only)
-- `POST /api/payment/:id/refund` — Process a refund (admin only)
-
-### Notification Endpoints
-- `GET /api/notification/my-notifications` — Get user's notifications (auth required)
-- `PUT /api/notification/:id/read` — Mark notification as read (auth required)
-- `DELETE /api/notification/:id` — Delete notification (auth required)
-- `GET /api/notification/` — Get all notifications (admin only)
-- `POST /api/notification/send` — Send notification (admin only)
-- `POST /api/notification/broadcast` — Broadcast notification (admin only)
 
 ---
 

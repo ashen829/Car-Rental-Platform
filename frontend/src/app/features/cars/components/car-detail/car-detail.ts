@@ -53,7 +53,7 @@ export class CarDetail implements OnInit {
     this.carId = this.route.snapshot.paramMap.get('id');
     if (this.carId) {
       const token = localStorage.getItem('auth_token') || '';
-      const url = `http://localhost:3000/api/cars/${this.carId}`;
+      const url = `http://localhost:3002/api/cars/${this.carId}`;
       const headers = new HttpHeaders({
         'Accept': 'application/json, text/plain, */*',
         'Authorization': `Bearer ${token}`

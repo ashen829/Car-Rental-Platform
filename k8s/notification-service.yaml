@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: ashen829/notification-service:latest
+          ports:
+            - containerPort: 3004
+          env:
+            - name: MYSQL_HOST
+              value: mysql
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: mysecurepassword
+            - name: MYSQL_DATABASE
+              value: car_rental
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  type: NodePort
+  ports:
+    - port: 3005
+      nodePort: 30005
+  selector:
+    app: notification-service

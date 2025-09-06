@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car-service
+  template:
+    metadata:
+      labels:
+        app: car-service
+    spec:
+      containers:
+        - name: car-service
+          image: ashen829/car-service:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: JWT_SECRET
+              value: car_rental_app_cloud_project
+            - name: JWT_EXPIRES_IN
+              value: "1h"
+            - name: MYSQL_HOST
+              value: mysql
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: mysecurepassword
+            - name: MYSQL_DATABASE
+              value: car_rental
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: car-service
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      nodePort: 30002
+  selector:
+    app: car-service

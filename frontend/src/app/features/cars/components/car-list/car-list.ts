@@ -106,7 +106,7 @@ export class CarList implements OnInit {
       end_date ? `end_date=${encodeURIComponent(end_date)}` : '',
       pickup_location ? `pickup_location=${encodeURIComponent(pickup_location)}` : ''
     ].filter(Boolean).join('&');
-    const url = `http://localhost:3002/cars/search?${params}`;
+    const url = `http://localhost:30002/cars/search?${params}`;
     this.http.post<any>(url, {}).subscribe({
       next: (res) => {
         const cars = res.data?.items || [];

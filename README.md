@@ -86,5 +86,4 @@ The platform is designed for cloud-native deployment using Docker and Kubernetes
 - Start backend: `node server.js`
 - Start frontend: `cd frontend && npm install && npm start`
 
-## License
-MIT
+

@@ -5,6 +5,32 @@ A full-stack car rental platform with user authentication, car management, booki
 
 ---
 
+## Microservices Architecture
+This platform is built using a microservices architecture, where each core business domain is implemented as an independent service. The main services are:
+- **User Service**: Handles user registration, authentication, and profile management.
+- **Car Service**: Manages car inventory, details, and availability.
+- **Booking Service**: Manages booking creation, updates, and cancellations.
+Each service has its own database tables and communicates with others via RESTful APIs. This separation allows for independent scaling, deployment, and maintenance.
+
+## Cloud Architecture
+The platform is designed for cloud-native deployment using Docker and Kubernetes. Key cloud architecture features include:
+- **Containerization**: All services (backend, frontend, database) are packaged as Docker containers for consistency across environments.
+- **Orchestration**: Kubernetes manages deployment, scaling, and self-healing of all services. Each service runs in its own pod, and services are exposed via Kubernetes Services (NodePort for local/demo, LoadBalancer for cloud).
+- **Persistent Storage**: MySQL uses a PersistentVolumeClaim (PVC) to ensure data durability across pod restarts.
+- **Configuration as Code**: All deployment manifests (YAML) are version-controlled, enabling reproducible infrastructure.
+- **Environment Management**: Environment variables are managed via Kubernetes ConfigMaps and Secrets, ensuring secure and consistent configuration.
+- **Self-Healing**: Kubernetes automatically restarts failed pods, ensuring high availability.
+
+## Deployment Details
+1. **Build Docker Images**: Each service has its own Dockerfile. Images are built and pushed to a container registry.
+2. **Apply Kubernetes Manifests**: Use `kubectl apply -f k8s/` to deploy all services, including MySQL, backend microservices, and frontend.
+3. **Expose Services**: NodePort is used for local/demo access
+4. **Environment Variables**: Managed via Kubernetes manifests, not included in Docker images. Sensitive data is stored in Secrets.
+5. **Persistent Data**: MySQL uses a PVC for data persistence.
+6. **Scaling & Self-Healing**: Kubernetes ensures services are always running and can be scaled as needed.
+7. **Validation**: Use `kubectl get pods`, `kubectl logs`, and browser access to verify all services are running and connected.
+
+
 ## API Endpoints
 
 ### User Endpoints
